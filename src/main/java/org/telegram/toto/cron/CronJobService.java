@@ -32,7 +32,7 @@ public class CronJobService {
     private boolean nextDrawReceived = false;
     private boolean moreThanCondition = false;
 
-    @Scheduled(cron = "*/10 * * * * *", zone = "Asia/Singapore")
+    // @Scheduled(cron = "*/10 * * * * *", zone = "Asia/Singapore")
     public void notifyDraw() {
         logger.info("cron job started");
         Optional<Draw> opt = webscrapperService.getNextDraw();
