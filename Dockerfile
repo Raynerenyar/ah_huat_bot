@@ -13,8 +13,8 @@ RUN mvn -f /app/pom.xml clean package -Dmaven.test.skip
 ## SECOND STAGE docker pull eclipse-temurin:17 ##
 FROM eclipse-temurin:17
 
-COPY --from=build /app/target/assessment-0.0.1-SNAPSHOT.jar /app/target/assessment-0.0.1-SNAPSHOT.jar
+COPY --from=build /app/target/toto-0.0.1-SNAPSHOT.jar /app/target/toto-0.0.1-SNAPSHOT.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "/app/target/assessment-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app/target/toto-0.0.1-SNAPSHOT.jar"]
