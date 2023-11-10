@@ -9,7 +9,6 @@ COPY pom.xml /app
 # RUN --mount=type=secret,id=_env,dst=/etc/secrets/.env cat /etc/secrets/.env
 RUN mvn -f /app/pom.xml clean package -Dmaven.test.skip
 
-
 ## SECOND STAGE docker pull eclipse-temurin:17 ##
 FROM eclipse-temurin:17
 

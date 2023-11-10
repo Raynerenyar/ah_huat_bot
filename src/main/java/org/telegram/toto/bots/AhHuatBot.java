@@ -1,15 +1,9 @@
 package org.telegram.toto.bots;
 
-import java.text.NumberFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
-import java.util.Optional;
-
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.abilitybots.api.objects.Locality;
 import org.telegram.abilitybots.api.objects.Privacy;
-import org.telegram.toto.models.Draw;
 import org.telegram.toto.repository.TelegramRepo;
 import org.telegram.toto.repository.entities.Chat;
 import org.telegram.toto.service.WebscrapperService;

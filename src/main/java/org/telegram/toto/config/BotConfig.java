@@ -1,10 +1,9 @@
 package org.telegram.toto.config;
 
-import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -12,11 +11,11 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import org.telegram.toto.bots.AhHuatBot;
 import org.telegram.toto.repository.TelegramRepo;
-import org.telegram.toto.repository.entities.Chat;
 import org.telegram.toto.service.WebscrapperService;
 
 @Configuration
 public class BotConfig {
+
     @Value("${bot.token}")
     private String BOT_TOKEN;
     @Value("${bot.username}")
@@ -27,6 +26,8 @@ public class BotConfig {
     private TelegramRepo telegramRepo;
     @Autowired
     private WebscrapperService webscrapperService;
+
+    private static final Logger logger = LoggerFactory.getLogger(BotConfig.class);
 
     @Bean
     public AhHuatBot createBot() {
@@ -42,7 +43,7 @@ public class BotConfig {
             botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(bot);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
         return bot;
