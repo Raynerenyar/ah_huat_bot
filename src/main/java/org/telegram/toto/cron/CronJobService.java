@@ -65,8 +65,6 @@ public class CronJobService {
 
             opt.ifPresentOrElse(draw -> {
 
-                List<Chat> chats = telegramRepo.findAll();
-
                 long value = draw.getValue();
 
                 // if value >= 5,000,000 then push notification
@@ -74,9 +72,9 @@ public class CronJobService {
                     moreThanCondition = true;
                     String drawInString = webscrapperService.getNextDrawInString(draw);
 
+                    List<Chat> chats = telegramRepo.findAll();
                     for (Chat chat : chats) {
-                        if (nextDrawReceived)
-                            break;
+
                         SendMessage sendMessage = new SendMessage();
                         sendMessage.setChatId(chat.getChatId());
                         sendMessage.setText(drawInString);
