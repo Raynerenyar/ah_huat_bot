@@ -35,5 +35,5 @@ build/
 ### environment ###
 .env
 
-ah_huat_bot
-ah_huat_bot.wal.0
+test
+test.wal.0

@@ -18,12 +18,23 @@ public class Chat {
     @Column(name = "CHAT_ID")
     private String chatId;
 
+    @Column(name = "ALERT_VALUE")
+    private long alertValue;
+
     public String getChatId() {
         return chatId;
     }
 
     public void setChatId(String chatId) {
         this.chatId = chatId;
+    }
+
+    public long getAlertValue() {
+        return alertValue;
+    }
+
+    public void setAlertValue(long alertValue) {
+        this.alertValue = alertValue;
     }
 
 }
