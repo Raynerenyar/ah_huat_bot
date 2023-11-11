@@ -56,7 +56,7 @@ public class AhHuatBot extends AbilityBot {
         return Ability
                 .builder()
                 .name("subscribe")
-                .info("To subscribe to alerts on the next draw that has prize money >= $5,000,000.")
+                .info("To subscribe to alerts on the next draw")
                 .locality(Locality.ALL)
                 .privacy(Privacy.PUBLIC)
                 .action(ctx -> {
@@ -72,7 +72,7 @@ public class AhHuatBot extends AbilityBot {
 
                         // responding after successful save there the need for another if statement
                         if (ctx.arguments().length > 0) {
-                            silent.send("Thank you for subscribing with alet value of " + ctx.firstArg(), creatorId);
+                            silent.send("Thank you for subscribing with alert value of " + ctx.firstArg(), creatorId);
                         } else {
                             silent.send("Thank you for subscribing", ctx.chatId());
                         }
