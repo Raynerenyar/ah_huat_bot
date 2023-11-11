@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -132,7 +131,7 @@ public class WebscrapperService {
             // System.out.println(cell.text());
             // sb.append(cell.text()).append("|");
             // }
-            System.out.println(cells.get(0).text());
+
             sb.append(String.format(
                     "| %-5s | %-12s | %-14s |",
                     cells.get(0).text().replace("Group", "").trim(),
