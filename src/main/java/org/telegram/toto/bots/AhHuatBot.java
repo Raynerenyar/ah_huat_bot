@@ -63,8 +63,10 @@ public class AhHuatBot extends AbilityBot {
                     Chat chat = new Chat();
                     chat.setChatId(String.valueOf(ctx.chatId()));
                     try {
-                        if (ctx.arguments().length > 0) {
-                            chat.setAlertValue(Long.valueOf(ctx.firstArg()));
+                        String value;
+
+                        if (ctx.arguments().length > 0 && (value = ctx.firstArg()) != null) {
+                            chat.setAlertValue(Long.valueOf(value));
                         } else {
                             chat.setAlertValue(Long.valueOf(0));
                         }
