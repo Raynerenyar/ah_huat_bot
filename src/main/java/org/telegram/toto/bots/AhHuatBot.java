@@ -1,5 +1,7 @@
 package org.telegram.toto.bots;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.abilitybots.api.objects.Locality;
@@ -15,6 +17,7 @@ public class AhHuatBot extends AbilityBot {
     private TelegramRepo telegramRepo;
     private WebscrapperService webscrapperService;
     private long creatorId;
+    private static final Logger logger = LoggerFactory.getLogger(AhHuatBot.class);
 
     public AhHuatBot(
             String BOT_TOKEN,
@@ -63,8 +66,8 @@ public class AhHuatBot extends AbilityBot {
                     Chat chat = new Chat();
                     chat.setChatId(String.valueOf(ctx.chatId()));
                     try {
-                        String value;
 
+                        String value;
                         if (ctx.arguments().length > 0 && (value = ctx.firstArg()) != null) {
                             chat.setAlertValue(Long.valueOf(value));
                         } else {
@@ -73,13 +76,17 @@ public class AhHuatBot extends AbilityBot {
                         telegramRepo.save(chat);
 
                         // responding after successful save there the need for another if statement
+
                         if (ctx.arguments().length > 0) {
-                            silent.send("Thank you for subscribing with alert value of " + ctx.firstArg(), creatorId);
+                            silent.send("Thank you for subscribing with alert value of "
+                                    + String.format("%,.0f", Double.valueOf(ctx.firstArg())), creatorId);
                         } else {
                             silent.send("Thank you for subscribing", ctx.chatId());
                         }
                     } catch (NumberFormatException | IllegalStateException e) {
-                        silent.send("Number format is wrong", ctx.chatId());
+                        if (e.getClass() == NumberFormatException.class)
+                            silent.send("Number format is wrong", ctx.chatId());
+                        logger.error(e.getMessage());
                     }
                 })
                 .enableStats()
@@ -106,21 +113,19 @@ public class AhHuatBot extends AbilityBot {
                 .locality(Locality.ALL)
                 .privacy(Privacy.PUBLIC)
                 .action(ctx -> {
+
                     String prevDraw = webscrapperService.getPreviousDraw();
-                    System.out.println(prevDraw);
-                    // silent.sendMd(prevDraw, ctx.chatId());
+
                     SendMessage sendMessage = new SendMessage();
-                    // sendMessage.enableHtml(true);
+
                     sendMessage.enableMarkdown(true);
                     sendMessage.setProtectContent(true);
-                    // sendMessage.enableMarkdownV2(true);
                     sendMessage.setText(prevDraw);
                     sendMessage.setChatId(ctx.chatId());
                     try {
                         sender.execute(sendMessage);
                     } catch (TelegramApiException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        logger.error(e.getMessage());
                     }
 
                 })
