@@ -4,6 +4,16 @@ This runs a telegram bot and a web service as well. The web service has nothing 
 # The bot
 [Telegram @ah_huat_bot](https://t.me/ah_huat_bot)
 
+## Commands
+
+| Command | Description |
+| --- | --- |
+| /subscribe |Subscribe to all draw releases |
+| /subscribe 1000000 |Subscribe to all draw with a minimum value |
+| /next |Get date, time, and value of the next draw |
+| /prev |Get date, time, value, winning groups, and winning numbers |
+| /calculate 1,5,6,13,28,35 | Calculate winnings |
+
 # Condition
 Condition for for receiving alerts:
 - Data exists and is more than a certain value
@@ -12,17 +22,3 @@ Condition for for receiving alerts:
 
 # Telegram Java API by Rubenlagus
 [https://github.com/rubenlagus/TelegramBots](https://github.com/rubenlagus/TelegramBots)
-
-|abc|ok|123|
-|---|---|---|
-|asdahfjasdhs|adhasdhjsad|hsjdadjsd|
-
-|Prize Group|Share Amount|No. of Winning Shares|
-|---|---|---|
-|Group 1|-|-|
-|Group 2|$509,652|1|
-|Group 3|$2,016|86|
-|Group 4|$466|203|
-|Group 5|$50|5,129|
-|Group 6|$25|6,065|
-|Group 7|$10|102,259|

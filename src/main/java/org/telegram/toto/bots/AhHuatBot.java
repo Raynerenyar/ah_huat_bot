@@ -1,12 +1,8 @@
 package org.telegram.toto.bots;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.abilitybots.api.objects.Locality;
@@ -15,31 +11,39 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.toto.models.CalculateRequest;
 import org.telegram.toto.models.CalculateResponse;
-import org.telegram.toto.repository.TelegramRepo;
-import org.telegram.toto.repository.entities.Chat;
+import org.telegram.toto.repository.ChatRepo;
 import org.telegram.toto.service.CalculatePrizeService;
+import org.telegram.toto.service.SubscriberService;
 import org.telegram.toto.service.WebscrapperService;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class AhHuatBot extends AbilityBot {
 
-    private TelegramRepo telegramRepo;
+    private ChatRepo telegramRepo;
     private WebscrapperService webscrapperService;
     private CalculatePrizeService calculatePrizeService;
+    private SubscriberService subscriberService;
     private long creatorId;
     private static final Logger logger = LoggerFactory.getLogger(AhHuatBot.class);
 
     public AhHuatBot(
             String BOT_TOKEN,
             String BOT_USERNAME,
-            TelegramRepo telegramRepo,
+            ChatRepo telegramRepo,
             long creatorId,
             WebscrapperService webscrapperService,
-            CalculatePrizeService calculatePrizeService) {
+            CalculatePrizeService calculatePrizeService,
+            @Lazy SubscriberService subscriberService) {
         super(BOT_TOKEN, BOT_USERNAME);
         this.telegramRepo = telegramRepo;
         this.creatorId = creatorId;
         this.webscrapperService = webscrapperService;
         this.calculatePrizeService = calculatePrizeService;
+        this.subscriberService = subscriberService;
     }
 
     public AhHuatBot(String BOT_TOKEN, String BOT_USERNAME) {
@@ -74,31 +78,10 @@ public class AhHuatBot extends AbilityBot {
                 .locality(Locality.ALL)
                 .privacy(Privacy.PUBLIC)
                 .action(ctx -> {
-                    Chat chat = new Chat();
-                    chat.setChatId(String.valueOf(ctx.chatId()));
-                    try {
-
-                        String value;
-                        if (ctx.arguments().length > 0 && (value = ctx.firstArg()) != null) {
-                            chat.setAlertValue(Long.valueOf(value));
-                        } else {
-                            chat.setAlertValue(Long.valueOf(0));
-                        }
-                        telegramRepo.save(chat);
-
-                        // responding after successful save there the need for another if statement
-
-                        if (ctx.arguments().length > 0) {
-                            silent.send("Thank you for subscribing with alert value of "
-                                    + String.format("%,.0f", Double.valueOf(ctx.firstArg())), creatorId);
-                        } else {
-                            silent.send("Thank you for subscribing", ctx.chatId());
-                        }
-                    } catch (NumberFormatException | IllegalStateException e) {
-                        if (e.getClass() == NumberFormatException.class)
-                            silent.send("Number format is wrong", ctx.chatId());
-                        logger.error(e.getMessage());
-                    }
+                    subscriberService.saveChatPreferences(ctx);
+                    boolean isNotified = subscriberService.initialNotifySubSilent(String.valueOf(ctx.chatId()));
+                    if (!isNotified)
+                        subscriberService.notifyFailSilent(Collections.singletonList(String.valueOf(ctx.chatId())));
                 })
                 .enableStats()
                 .build();
@@ -133,11 +116,8 @@ public class AhHuatBot extends AbilityBot {
                     sendMessage.setProtectContent(true);
                     sendMessage.setText(prevDraw);
                     sendMessage.setChatId(ctx.chatId());
-                    try {
-                        sender.execute(sendMessage);
-                    } catch (TelegramApiException e) {
-                        logger.error(e.getMessage());
-                    }
+
+                    silent.execute(sendMessage);
 
                 })
                 .build();
@@ -184,23 +164,17 @@ public class AhHuatBot extends AbilityBot {
 
                             sb.append("You have won $").append(totalValueWon).append("\n");
                             sb.append("```\n");
-                            sb.append("Your numbers are: " +
-                                    submittedNumbers
-                                            .toString()
-                                            .replace("[", " ")
-                                            .replace("]", " ")
-                                    +
-                                    "\n");
-                            sb.append(
-                                    "Winning numbers are: " +
-                                            calculateResponse
-                                                    .getD()
-                                                    .getWinningNumbers()
-                                                    .toString()
-                                                    .replace("[", "")
-                                                    .replace("]", "")
-                                            +
-                                            "\n");
+                            sb.append("Your numbers are: ").append(submittedNumbers
+                                    .toString()
+                                    .replace("[", " ")
+                                    .replace("]", " ")).append("\n");
+
+                            sb.append("Winning numbers are: ").append(calculateResponse
+                                    .getD()
+                                    .getWinningNumbers()
+                                    .toString()
+                                    .replace("[", "")
+                                    .replace("]", "")).append("\n");
 
                             sb.append("\n");
                             sb.append(String.format("| %-5s | %-12s | %-14s |%n", "Group", "Amount", "No. of shares"));
@@ -230,7 +204,7 @@ public class AhHuatBot extends AbilityBot {
                             try {
                                 sender.execute(sendMessage);
                             } catch (TelegramApiException e) {
-                                logger.error(e.getMessage());
+                                logger.error(e.getMessage(), e);
                             }
 
                         }
@@ -240,9 +214,5 @@ public class AhHuatBot extends AbilityBot {
                 })
                 .build();
     }
-
-    // public Ability calculateiTotoCommand() {
-    // return Ability.builder().build();
-    // }
 
 }

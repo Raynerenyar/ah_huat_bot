@@ -10,8 +10,9 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import org.telegram.toto.bots.AhHuatBot;
-import org.telegram.toto.repository.TelegramRepo;
+import org.telegram.toto.repository.ChatRepo;
 import org.telegram.toto.service.CalculatePrizeService;
+import org.telegram.toto.service.SubscriberService;
 import org.telegram.toto.service.WebscrapperService;
 
 @Configuration
@@ -24,11 +25,13 @@ public class BotConfig {
     @Value("${creator.id}")
     private long CREATOR_ID;
     @Autowired
-    private TelegramRepo telegramRepo;
+    private ChatRepo telegramRepo;
     @Autowired
     private WebscrapperService webscrapperService;
     @Autowired
     private CalculatePrizeService calculatePrizeService;
+    @Autowired
+    private SubscriberService subscriberService;
 
     private static final Logger logger = LoggerFactory.getLogger(BotConfig.class);
 
@@ -42,12 +45,13 @@ public class BotConfig {
                 telegramRepo,
                 CREATOR_ID,
                 webscrapperService,
-                calculatePrizeService);
+                calculatePrizeService,
+                subscriberService);
         try {
             botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(bot);
         } catch (TelegramApiException e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
         }
 
         return bot;

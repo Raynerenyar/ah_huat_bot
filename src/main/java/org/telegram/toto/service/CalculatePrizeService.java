@@ -3,6 +3,7 @@ package org.telegram.toto.service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,24 +40,24 @@ public class CalculatePrizeService {
         ResponseEntity<String> exchange = restTemplate.exchange(requestEntity, String.class);
 
         String s = exchange.getBody();
-        InputStream is = new ByteArrayInputStream(s.getBytes());
+        if (s != null) {
+            InputStream is = new ByteArrayInputStream(s.getBytes());
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                JsonNode jsonNode = objectMapper.readTree(is);
+                JsonNode d = jsonNode.get("d");
 
-        ObjectMapper objectMapper = new ObjectMapper();
+                Gson gson = new Gson();
+                Data data = gson.fromJson(d.asText(), Data.class);
 
-        try {
-            JsonNode jsonNode = objectMapper.readTree(is);
-            JsonNode d = jsonNode.get("d");
+                return new CalculateResponse(data);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                logger.error(e.getMessage(), e);
+                return null;
 
-            Gson gson = new Gson();
-            Data data = gson.fromJson(d.asText(), Data.class);
-
-            return new CalculateResponse(data);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            logger.error(e.getMessage());
-            return null;
+            }
         }
-
+        return null;
     }
-
 }
