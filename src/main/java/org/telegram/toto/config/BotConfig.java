@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import org.telegram.toto.bots.AhHuatBot;
 import org.telegram.toto.repository.TelegramRepo;
+import org.telegram.toto.service.CalculatePrizeService;
 import org.telegram.toto.service.WebscrapperService;
 
 @Configuration
@@ -26,6 +27,8 @@ public class BotConfig {
     private TelegramRepo telegramRepo;
     @Autowired
     private WebscrapperService webscrapperService;
+    @Autowired
+    private CalculatePrizeService calculatePrizeService;
 
     private static final Logger logger = LoggerFactory.getLogger(BotConfig.class);
 
@@ -38,7 +41,8 @@ public class BotConfig {
                 BOT_USERNAME,
                 telegramRepo,
                 CREATOR_ID,
-                webscrapperService);
+                webscrapperService,
+                calculatePrizeService);
         try {
             botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(bot);

@@ -1,5 +1,10 @@
 package org.telegram.toto.bots;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.abilitybots.api.bot.AbilityBot;
@@ -8,14 +13,18 @@ import org.telegram.abilitybots.api.objects.Locality;
 import org.telegram.abilitybots.api.objects.Privacy;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.toto.models.CalculateRequest;
+import org.telegram.toto.models.CalculateResponse;
 import org.telegram.toto.repository.TelegramRepo;
 import org.telegram.toto.repository.entities.Chat;
+import org.telegram.toto.service.CalculatePrizeService;
 import org.telegram.toto.service.WebscrapperService;
 
 public class AhHuatBot extends AbilityBot {
 
     private TelegramRepo telegramRepo;
     private WebscrapperService webscrapperService;
+    private CalculatePrizeService calculatePrizeService;
     private long creatorId;
     private static final Logger logger = LoggerFactory.getLogger(AhHuatBot.class);
 
@@ -24,11 +33,13 @@ public class AhHuatBot extends AbilityBot {
             String BOT_USERNAME,
             TelegramRepo telegramRepo,
             long creatorId,
-            WebscrapperService webscrapperService) {
+            WebscrapperService webscrapperService,
+            CalculatePrizeService calculatePrizeService) {
         super(BOT_TOKEN, BOT_USERNAME);
         this.telegramRepo = telegramRepo;
         this.creatorId = creatorId;
         this.webscrapperService = webscrapperService;
+        this.calculatePrizeService = calculatePrizeService;
     }
 
     public AhHuatBot(String BOT_TOKEN, String BOT_USERNAME) {
@@ -131,5 +142,107 @@ public class AhHuatBot extends AbilityBot {
                 })
                 .build();
     }
+
+    public Ability calculateWinningsCommand() {
+        return Ability
+                .builder()
+                .name("calculate")
+                .info("calculate winnings based on numbers passed")
+                .locality(Locality.ALL)
+                .privacy(Privacy.PUBLIC)
+                .action(ctx -> {
+
+                    Optional<Integer> opt = webscrapperService.getLastDrawNo();
+                    if (opt.isEmpty()) {
+                        silent.send("Unable to calculate", ctx.chatId());
+                    } else {
+
+                        CalculateRequest calculateRequest = new CalculateRequest(
+                                opt.get(),
+                                false,
+                                ctx.firstArg(),
+                                1,
+                                1);
+
+                        CalculateResponse calculateResponse = calculatePrizeService
+                                .getCalculateResults(calculateRequest);
+
+                        int totalValueWon = calculateResponse.getD().getPrizes().stream()
+                                .map(prize -> prize.getTotal())
+                                .reduce(
+                                        0,
+                                        (subtotal, element) -> subtotal + element);
+
+                        if (totalValueWon == 0) {
+                            silent.send("You did not win any prize", ctx.chatId());
+                        } else {
+
+                            StringBuilder sb = new StringBuilder();
+
+                            List<String> submittedNumbers = Arrays.asList(ctx.firstArg().split(","));
+                            Collections.sort(submittedNumbers);
+
+                            sb.append("You have won $").append(totalValueWon).append("\n");
+                            sb.append("```\n");
+                            sb.append("Your numbers are: " +
+                                    submittedNumbers
+                                            .toString()
+                                            .replace("[", " ")
+                                            .replace("]", " ")
+                                    +
+                                    "\n");
+                            sb.append(
+                                    "Winning numbers are: " +
+                                            calculateResponse
+                                                    .getD()
+                                                    .getWinningNumbers()
+                                                    .toString()
+                                                    .replace("[", "")
+                                                    .replace("]", "")
+                                            +
+                                            "\n");
+
+                            sb.append("\n");
+                            sb.append(String.format("| %-5s | %-12s | %-14s |%n", "Group", "Amount", "No. of shares"));
+                            String s1 = "-".repeat(5);
+                            String s2 = "-".repeat(12);
+                            String s3 = "-".repeat(14);
+                            sb.append(String.format("| %s | %s | %s |%n", s1, s2, s3));
+
+                            calculateResponse.getD().getPrizes().forEach(prize -> {
+
+                                sb.append(String.format(
+                                        "| %-5s | $%-11s | %-14s |%n",
+                                        prize.getGroupNumber(),
+                                        prize.getShareAmount(),
+                                        prize.getNumberOfSharesWon()));
+                            });
+                            sb.append("\n");
+                            sb.append("```");
+
+                            SendMessage sendMessage = new SendMessage();
+
+                            sendMessage.enableMarkdown(true);
+                            sendMessage.setProtectContent(true);
+                            sendMessage.setText(sb.toString());
+                            sendMessage.setChatId(ctx.chatId());
+
+                            try {
+                                sender.execute(sendMessage);
+                            } catch (TelegramApiException e) {
+                                logger.error(e.getMessage());
+                            }
+
+                        }
+
+                    }
+
+                })
+                .build();
+    }
+
+    // public Ability calculateiTotoCommand() {
+    // return Ability.builder().build();
+    // }
 
 }

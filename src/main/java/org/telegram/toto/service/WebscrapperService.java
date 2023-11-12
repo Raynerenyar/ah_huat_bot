@@ -144,4 +144,18 @@ public class WebscrapperService {
         return sb.toString();
     }
 
+    public Optional<Integer> getLastDrawNo() {
+        Document doc;
+        try {
+            doc = Jsoup.connect(url3).get();
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+        Elements tables = doc.getElementsByTag("table");
+        String drawNumTexString = tables.first().getElementsByClass("drawNumber").text();
+        String drawNum = drawNumTexString.split(" ")[2];
+
+        return Optional.of(Integer.valueOf(drawNum));
+    }
+
 }
