@@ -1,6 +1,7 @@
 package org.telegram.toto.repository.entities;
 
-import jakarta.annotation.Nonnull;
+import org.springframework.lang.NonNull;
+
 import jakarta.persistence.Column;
 
 import jakarta.persistence.Entity;
@@ -13,7 +14,7 @@ import jakarta.validation.constraints.Positive;
 public class Chat {
 
     @Id
-    @Nonnull
+    @NonNull
     @Column(name = "CHAT_ID")
     private String chatId;
 
@@ -22,6 +23,7 @@ public class Chat {
     private long alertValue;
 
     @Column(name = "NEXT_DRAW_RECEIVED")
+    @NonNull
     private boolean nextDrawReceived = false;
 
     public String getChatId() {

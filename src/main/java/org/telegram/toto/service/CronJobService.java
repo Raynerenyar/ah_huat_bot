@@ -35,9 +35,11 @@ public class CronJobService {
         if (opt.isPresent()) {
             Draw draw = opt.get();
             List<String> chatIds = chatRepo.findAllByAlertValueNextDrawReceived(draw.getValue(), false);
-            if (LocalDateTime.now().isBefore(draw.getDatetime())) {
-                subscriberService.initialNotifySubLoud(chatIds, draw);
-                chatRepo.updateChatsNextDrawReceived(true, chatIds);
+            if (chatIds.size() > 0) {
+                if (LocalDateTime.now().isBefore(draw.getDatetime())) {
+                    subscriberService.initialNotifySubLoud(chatIds, draw);
+                    chatRepo.updateChatsNextDrawReceived(true, chatIds);
+                }
             }
         } else {
             List<String> chats = chatRepo.findAllReturnChatId();
@@ -59,9 +61,11 @@ public class CronJobService {
 
             Draw draw = opt.get();
             List<String> chatIds = chatRepo.findAllByAlertValueNextDrawReceived(draw.getValue(), true);
-            subscriberService.subsequentNotifySubLoud(chatIds, draw);
-            if (LocalDateTime.now().isAfter(draw.getDatetime())) {
-                chatRepo.updateChatsNextDrawReceived(false, chatIds);
+            if (chatIds.size() > 0) {
+                subscriberService.subsequentNotifySubLoud(chatIds, draw);
+                if (LocalDateTime.now().isAfter(draw.getDatetime())) {
+                    chatRepo.updateChatsNextDrawReceived(false, chatIds);
+                }
             }
 
         } else {
