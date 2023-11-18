@@ -1,5 +1,8 @@
 package org.telegram.toto.bots;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
@@ -11,11 +14,13 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.toto.models.CalculateRequest;
 import org.telegram.toto.models.CalculateResponse;
+import org.telegram.toto.models.Prize;
 import org.telegram.toto.repository.ChatRepo;
 import org.telegram.toto.service.CalculatePrizeService;
 import org.telegram.toto.service.SubscriberService;
 import org.telegram.toto.service.WebscrapperService;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -162,34 +167,50 @@ public class AhHuatBot extends AbilityBot {
                             List<String> submittedNumbers = Arrays.asList(ctx.firstArg().split(","));
                             Collections.sort(submittedNumbers);
 
-                            sb.append("You have won $").append(totalValueWon).append("\n");
-                            sb.append("Your numbers are: ").append(submittedNumbers
-                                    .toString()
+                            sb.append("You have won $")
+                                    .append(totalValueWon).append("\n")
+                                    .append("\n");
+                            sb.append("Your Numbers\n");
+                            sb.append(submittedNumbers.toString()
                                     .replace("[", " ")
-                                    .replace("]", " ")).append("\n");
-
-                            sb.append("Winning numbers are: ").append(calculateResponse
+                                    .replace("]", " "))
+                                    .append("\n");
+                            sb.append("\n");
+                            sb.append("Winning Numbers\n");
+                            sb.append(calculateResponse
                                     .getD()
                                     .getWinningNumbers()
                                     .toString()
                                     .replace("[", "")
                                     .replace("]", "")).append("\n");
+                            sb.append("\n");
+
+                            List<Prize> prizes = calculateResponse.getD().getPrizes();
 
                             sb.append("```\n");
-                            sb.append(String.format("| %-5s | %-12s | %-14s |%n", "Group", "Amount", "No. of shares"));
                             String s1 = "-".repeat(5);
                             String s2 = "-".repeat(12);
                             String s3 = "-".repeat(14);
+
+                            sb.append(String.format("| %-5s | %-12s | %-14s |%n", "Group", "Amount", "No. of shares"));
                             sb.append(String.format("| %s | %s | %s |%n", s1, s2, s3));
 
-                            calculateResponse.getD().getPrizes().forEach(prize -> {
-
+                            for (int i = 0; i < prizes.size(); i++) {
                                 sb.append(String.format(
-                                        "| %-5s | $%-11s | %-14s |%n",
-                                        prize.getGroupNumber(),
-                                        prize.getShareAmount(),
-                                        prize.getNumberOfSharesWon()));
-                            });
+                                        "| %-5s | $%-11s | %-14s |",
+                                        prizes.get(i).getGroupNumber(),
+                                        prizes.get(i).getShareAmount(),
+                                        prizes.get(i).getNumberOfSharesWon()));
+
+                                sb.append("\n");
+                            }
+                            int numOfPrizes = prizes.size();
+                            int minNumOfPrizes = 4; // for markdown to render tables properly
+                            if (prizes.size() < minNumOfPrizes) {
+                                for (int i = 0; i < minNumOfPrizes - numOfPrizes; i++) {
+                                    sb.append(String.format("| %s | %s | %s |%n", s1, s2, s3));
+                                }
+                            }
                             sb.append("```");
 
                             SendMessage sendMessage = new SendMessage();
@@ -213,4 +234,18 @@ public class AhHuatBot extends AbilityBot {
                 .build();
     }
 
+    // public Ability test() {
+    // return Ability
+    // .builder()
+    // .name("test")
+    // .info("testing")
+    // .locality(Locality.ALL)
+    // .privacy(Privacy.PUBLIC)
+    // .action(ctx-> {
+    // })
+    // .post(ctx->{
+    // ctx.
+    // })
+    // .build();
+    // }
 }
