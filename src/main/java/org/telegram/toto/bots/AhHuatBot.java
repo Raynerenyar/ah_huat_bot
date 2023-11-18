@@ -163,7 +163,6 @@ public class AhHuatBot extends AbilityBot {
                             Collections.sort(submittedNumbers);
 
                             sb.append("You have won $").append(totalValueWon).append("\n");
-                            sb.append("```\n");
                             sb.append("Your numbers are: ").append(submittedNumbers
                                     .toString()
                                     .replace("[", " ")
@@ -176,7 +175,7 @@ public class AhHuatBot extends AbilityBot {
                                     .replace("[", "")
                                     .replace("]", "")).append("\n");
 
-                            sb.append("\n");
+                            sb.append("```\n");
                             sb.append(String.format("| %-5s | %-12s | %-14s |%n", "Group", "Amount", "No. of shares"));
                             String s1 = "-".repeat(5);
                             String s2 = "-".repeat(12);
@@ -191,7 +190,6 @@ public class AhHuatBot extends AbilityBot {
                                         prize.getShareAmount(),
                                         prize.getNumberOfSharesWon()));
                             });
-                            sb.append("\n");
                             sb.append("```");
 
                             SendMessage sendMessage = new SendMessage();

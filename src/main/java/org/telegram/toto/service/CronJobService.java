@@ -51,6 +51,12 @@ public class CronJobService {
 
     }
 
+    // Resets nextDrawReceived to false
+    @Scheduled(cron = "0 30 18 ? * MON,THU", zone = "Asia/Singapore")
+    public void resetNextDrawReceived() {
+        chatRepo.updateChatsNextDrawReceivedToFalse();
+    }
+
     // repeat it everyday at 11am
     @Scheduled(cron = "0 0 11 * * ?", zone = "Asia/Singapore")
     public void dailyReminder() {
@@ -63,9 +69,9 @@ public class CronJobService {
             List<String> chatIds = chatRepo.findAllByAlertValueNextDrawReceived(draw.getValue(), true);
             if (chatIds.size() > 0) {
                 subscriberService.subsequentNotifySubLoud(chatIds, draw);
-                if (LocalDateTime.now().isAfter(draw.getDatetime())) {
-                    chatRepo.updateChatsNextDrawReceived(false, chatIds);
-                }
+                // if (LocalDateTime.now().isAfter(draw.getDatetime())) {
+                // chatRepo.updateChatsNextDrawReceived(false, chatIds);
+                // }
             }
 
         } else {
