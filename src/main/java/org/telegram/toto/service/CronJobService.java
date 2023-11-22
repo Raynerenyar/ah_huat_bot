@@ -52,7 +52,7 @@ public class CronJobService {
     }
 
     // Resets nextDrawReceived to false
-    @Scheduled(cron = "0 30 18 ? * MON,THU", zone = "Asia/Singapore")
+    @Scheduled(cron = "0 28 18 ? * MON,THU", zone = "Asia/Singapore")
     public void resetNextDrawReceived() {
         chatRepo.updateChatsNextDrawReceivedToFalse();
     }
