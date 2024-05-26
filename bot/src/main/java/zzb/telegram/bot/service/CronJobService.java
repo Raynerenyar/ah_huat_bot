@@ -1,4 +1,4 @@
-package org.telegram.toto.service;
+package zzb.telegram.bot.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.telegram.toto.bots.AhHuatBot;
-import org.telegram.toto.models.Draw;
-import org.telegram.toto.repository.ChatRepo;
+import zzb.telegram.bot.bots.AhHuatBot;
+import zzb.telegram.bot.models.Draw;
+import zzb.telegram.bot.repository.ChatRepo;
 
 @Service
 public class CronJobService {

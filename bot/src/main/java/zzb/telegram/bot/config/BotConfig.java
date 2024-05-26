@@ -1,4 +1,4 @@
-package org.telegram.toto.config;
+package zzb.telegram.bot.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,11 +9,11 @@ import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
-import org.telegram.toto.bots.AhHuatBot;
-import org.telegram.toto.repository.ChatRepo;
-import org.telegram.toto.service.CalculatePrizeService;
-import org.telegram.toto.service.SubscriberService;
-import org.telegram.toto.service.WebscrapperService;
+import zzb.telegram.bot.bots.AhHuatBot;
+import zzb.telegram.bot.repository.ChatRepo;
+import zzb.telegram.bot.service.CalculatePrizeService;
+import zzb.telegram.bot.service.SubscriberService;
+import zzb.telegram.bot.service.WebscrapperService;
 
 @Configuration
 public class BotConfig {

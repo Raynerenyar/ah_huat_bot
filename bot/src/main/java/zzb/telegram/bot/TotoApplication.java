@@ -1,4 +1,4 @@
-package org.telegram.toto;
+package zzb.telegram.bot;
 
 import java.util.List;
 
@@ -8,16 +8,16 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.telegram.toto.repository.ChatRepo;
-import org.telegram.toto.repository.entities.Chat;
+import zzb.telegram.bot.repository.ChatRepo;
+import zzb.telegram.bot.repository.entities.Chat;
 
 @SpringBootApplication(scanBasePackages = {
-        "org.telegram.toto.service",
-        "org.telegram.toto.repository",
-        "org.telegram.toto.controller",
-        "org.telegram.toto.config",
-        "org.telegram.toto.cron"})
-@EntityScan("org.telegram.toto.repository.entities")
+        "zzb.telegram.bot.service",
+        "zzb.telegram.bot.repository",
+        "zzb.telegram.bot.controller",
+        "zzb.telegram.bot.config",
+        "zzb.telegram.bot.cron"})
+@EntityScan("zzb.telegram.bot.repository.entities")
 @EnableScheduling
 public class TotoApplication {
 

@@ -1,4 +1,4 @@
-package org.telegram.toto.service;
+package zzb.telegram.bot.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -12,9 +12,9 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.telegram.toto.models.CalculateRequest;
-import org.telegram.toto.models.CalculateResponse;
-import org.telegram.toto.models.Data;
+import zzb.telegram.bot.models.CalculateRequest;
+import zzb.telegram.bot.models.CalculateResponse;
+import zzb.telegram.bot.models.Data;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,4 +1,4 @@
-package org.telegram.toto.bots;
+package zzb.telegram.bot.bots;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,13 +12,13 @@ import org.telegram.abilitybots.api.objects.Locality;
 import org.telegram.abilitybots.api.objects.Privacy;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.toto.models.CalculateRequest;
-import org.telegram.toto.models.CalculateResponse;
-import org.telegram.toto.models.Prize;
-import org.telegram.toto.repository.ChatRepo;
-import org.telegram.toto.service.CalculatePrizeService;
-import org.telegram.toto.service.SubscriberService;
-import org.telegram.toto.service.WebscrapperService;
+import zzb.telegram.bot.models.CalculateRequest;
+import zzb.telegram.bot.models.CalculateResponse;
+import zzb.telegram.bot.models.Prize;
+import zzb.telegram.bot.repository.ChatRepo;
+import zzb.telegram.bot.service.CalculatePrizeService;
+import zzb.telegram.bot.service.SubscriberService;
+import zzb.telegram.bot.service.WebscrapperService;
 
 import java.io.IOException;
 import java.util.Arrays;

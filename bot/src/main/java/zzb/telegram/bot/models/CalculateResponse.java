@@ -1,4 +1,4 @@
-package org.telegram.toto.models;
+package zzb.telegram.bot.models;
 
 import java.io.Serializable;
 

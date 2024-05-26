@@ -1,4 +1,4 @@
-package org.telegram.toto.repository.entities;
+package zzb.telegram.bot.repository.entities;
 
 import org.springframework.lang.NonNull;
 

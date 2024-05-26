@@ -1,4 +1,4 @@
-package org.telegram.toto.service;
+package zzb.telegram.bot.service;
 
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -13,7 +13,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.telegram.toto.models.Draw;
+import zzb.telegram.bot.models.Draw;
 
 @Service
 public class WebscrapperService {

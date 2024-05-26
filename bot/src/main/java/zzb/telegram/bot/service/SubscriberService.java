@@ -1,4 +1,4 @@
-package org.telegram.toto.service;
+package zzb.telegram.bot.service;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,10 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.telegram.abilitybots.api.objects.MessageContext;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.toto.bots.AhHuatBot;
-import org.telegram.toto.models.Draw;
-import org.telegram.toto.repository.ChatRepo;
-import org.telegram.toto.repository.entities.Chat;
+import zzb.telegram.bot.bots.AhHuatBot;
+import zzb.telegram.bot.models.Draw;
+import zzb.telegram.bot.repository.ChatRepo;
+import zzb.telegram.bot.repository.entities.Chat;
 
 @Service
 @Transactional

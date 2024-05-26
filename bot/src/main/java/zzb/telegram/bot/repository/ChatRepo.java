@@ -1,4 +1,4 @@
-package org.telegram.toto.repository;
+package zzb.telegram.bot.repository;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.telegram.toto.repository.entities.Chat;
+import zzb.telegram.bot.repository.entities.Chat;
 
 public interface ChatRepo extends JpaRepository<Chat, String> {
 
