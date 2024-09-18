@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import org.telegram.toto.bots.AhHuatBot;
+import org.telegram.toto.bots.AhHuatLongBot;
 import org.telegram.toto.repository.ChatRepo;
 import org.telegram.toto.service.CalculatePrizeService;
 import org.telegram.toto.service.SubscriberService;
@@ -47,9 +49,11 @@ public class BotConfig {
                 webscrapperService,
                 calculatePrizeService,
                 subscriberService);
+        TelegramLongPollingBot longPollingBot = new AhHuatLongBot(BOT_TOKEN, BOT_USERNAME, subscriberService);
         try {
             botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(bot);
+            // botsApi.registerBot(longPollingBot);
         } catch (TelegramApiException e) {
             logger.error(e.getMessage(), e);
         }
