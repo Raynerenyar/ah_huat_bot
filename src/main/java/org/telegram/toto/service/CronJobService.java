@@ -27,27 +27,44 @@ public class CronJobService {
 
     private static final Logger logger = LoggerFactory.getLogger(CronJobService.class);
 
-    // Monday and Thursday after 6:30 PM every hour until a draw is released
-    @Scheduled(cron = "0 30 18/1 ? * MON,THU", zone = "Asia/Singapore")
+    // Monday and Thursday after 6:30 PM every 30 minutes until a draw is released
+    @Scheduled(cron = "0 0/30 18/1 ? * MON,THU", zone = "Asia/Singapore")
     public void onTheDayRemind() {
 
         Optional<Draw> opt = webscrapperService.getNextDraw();
-        if (opt.isPresent()) {
-            Draw draw = opt.get();
-            List<String> chatIds = chatRepo.findAllByAlertValueNextDrawReceived(draw.getValue(), false);
-            if (chatIds.size() > 0) {
-                if (LocalDateTime.now().isBefore(draw.getDatetime())) {
-                    subscriberService.initialNotifySubLoud(chatIds, draw);
-                    chatRepo.updateChatsNextDrawReceived(true, chatIds);
-                }
-            }
-        } else {
-            List<String> chats = chatRepo.findAllReturnChatId();
-            chats.forEach(id -> {
-                bot.silent().send("Failed to get draw", Long.parseLong(id));
-            });
-            logger.error("Failed to get draw");
-        }
+        opt.ifPresentOrElse(
+                draw -> {
+                    if (LocalDateTime.now().isBefore(draw.getDatetime())) {
+                        List<String> chatIds = chatRepo.findAllByAlertValueNextDrawReceived(draw.getValue(), false);
+                        if (!chatIds.isEmpty()) {
+                            subscriberService.initialNotifySubLoud(chatIds, draw);
+                            chatRepo.updateChatsNextDrawReceived(true, chatIds);
+                        }
+                    }
+                },
+                () -> {
+                    List<String> chats = chatRepo.findAllReturnChatId();
+                    chats.forEach(id -> {
+                        bot.silent().send("Failed to get draw", Long.parseLong(id));
+                    });
+                    logger.error("Failed to get draw");
+                });
+//        if (opt.isPresent()) {
+//            Draw draw = opt.get();
+//            if (LocalDateTime.now().isBefore(draw.getDatetime())) {
+//                List<String> chatIds = chatRepo.findAllByAlertValueNextDrawReceived(draw.getValue(), false);
+//                if (!chatIds.isEmpty()) {
+//                    subscriberService.initialNotifySubLoud(chatIds, draw);
+//                    chatRepo.updateChatsNextDrawReceived(true, chatIds);
+//                }
+//            }
+//        } else {
+//            List<String> chats = chatRepo.findAllReturnChatId();
+//            chats.forEach(id -> {
+//                bot.silent().send("Failed to get draw", Long.parseLong(id));
+//            });
+//            logger.error("Failed to get draw");
+//        }
 
     }
 
@@ -67,7 +84,7 @@ public class CronJobService {
 
             Draw draw = opt.get();
             List<String> chatIds = chatRepo.findAllByAlertValueNextDrawReceived(draw.getValue(), true);
-            if (chatIds.size() > 0) {
+            if (!chatIds.isEmpty()) {
                 subscriberService.subsequentNotifySubLoud(chatIds, draw);
                 // if (LocalDateTime.now().isAfter(draw.getDatetime())) {
                 // chatRepo.updateChatsNextDrawReceived(false, chatIds);
