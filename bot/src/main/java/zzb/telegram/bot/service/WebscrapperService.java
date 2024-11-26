@@ -127,16 +127,12 @@ public class WebscrapperService {
         for (int i = 2; i < numOfRows; i++) {
             Elements cells = winningSharesRows.get(i).getElementsByTag("td");
 
-            // for (Element cell : cells) {
-            // System.out.println(cell.text());
-            // sb.append(cell.text()).append("|");
-            // }
-
             sb.append(String.format(
                     "| %-5s | %-12s | %-14s |",
                     cells.get(0).text().replace("Group", "").trim(),
                     cells.get(1).text(),
                     cells.get(2).text()));
+
             sb.append("\n");
         }
         sb.append("```");

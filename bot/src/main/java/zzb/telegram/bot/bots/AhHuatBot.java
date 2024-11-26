@@ -1,8 +1,5 @@
 package zzb.telegram.bot.bots;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
@@ -19,8 +16,8 @@ import zzb.telegram.bot.repository.ChatRepo;
 import zzb.telegram.bot.service.CalculatePrizeService;
 import zzb.telegram.bot.service.SubscriberService;
 import zzb.telegram.bot.service.WebscrapperService;
+import zzb.telegram.bot.util.telegramMessageBuilder;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -153,10 +150,8 @@ public class AhHuatBot extends AbilityBot {
                                 .getCalculateResults(calculateRequest);
 
                         int totalValueWon = calculateResponse.getD().getPrizes().stream()
-                                .map(prize -> prize.getTotal())
-                                .reduce(
-                                        0,
-                                        (subtotal, element) -> subtotal + element);
+                                .map(Prize::getTotal)
+                                .reduce(0, Integer::sum);
 
                         if (totalValueWon == 0) {
                             silent.send("You did not win any prize", ctx.chatId());
@@ -172,8 +167,8 @@ public class AhHuatBot extends AbilityBot {
                                     .append("\n");
                             sb.append("Your Numbers\n");
                             sb.append(submittedNumbers.toString()
-                                    .replace("[", " ")
-                                    .replace("]", " "))
+                                            .replace("[", " ")
+                                            .replace("]", " "))
                                     .append("\n");
                             sb.append("\n");
                             sb.append("Winning Numbers\n");
@@ -229,6 +224,49 @@ public class AhHuatBot extends AbilityBot {
                         }
 
                     }
+
+                })
+                .build();
+    }
+
+    public Ability startCommand() {
+        return Ability
+                .builder()
+                .name("start")
+                .locality(Locality.ALL)
+                .privacy(Privacy.PUBLIC)
+                .action(ctx -> {
+
+                    StringBuilder sb = new StringBuilder();
+                    telegramMessageBuilder telegramMessageBuilder = new telegramMessageBuilder();
+                    SendMessage sendMessage = new SendMessage();
+
+                    telegramMessageBuilder
+                            .boldText("Hello there, " + ctx.user().getFirstName())
+                            .newLine()
+                            .addText("This is a Toto bot that tracks the result draw from the Singapore pools")
+                            .newLine()
+                            .addText("This bot is not affiliated with the Singapore Pools")
+                            .newLine()
+                            .newLine()
+                            .addText("/" + subscribeCommand().name()).addText(" - " + subscribeCommand().info())
+                            .newLine()
+                            .addText("/" + unsubscribeCommand().name()).addText(" - " + unsubscribeCommand().info())
+                            .newLine()
+                            .addText("/" + nextDrawCommand().name()).addText(" - " + nextDrawCommand().info())
+                            .newLine()
+                            .addText("/" + prevCommand().name()).addText(" - " + prevCommand().info())
+                            .newLine()
+                            .addText("/" + calculateWinningsCommand().name()).addText(" - " + calculateWinningsCommand().info())
+                            .newLine();
+
+                    sendMessage.enableHtml(true);
+                    sendMessage.setProtectContent(true);
+                    sendMessage.setText(telegramMessageBuilder.toString());
+                    sendMessage.setChatId(ctx.chatId());
+
+                    silent.execute(sendMessage);
+
 
                 })
                 .build();
