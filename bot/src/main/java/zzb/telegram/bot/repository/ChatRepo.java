@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import zzb.telegram.bot.repository.entities.Chat;
 
 public interface ChatRepo extends JpaRepository<Chat, String> {
@@ -28,9 +29,16 @@ public interface ChatRepo extends JpaRepository<Chat, String> {
 			@Param("chatIds") List<String> chatIds);
 
 	@Modifying
+	@Transactional
 	@Query("UPDATE Chat c SET c.nextDrawReceived = false")
 	public void updateChatsNextDrawReceivedToFalse();
 
 	@Query("SELECT c.chatId FROM Chat c")
 	public List<String> findAllReturnChatId();
+
+	@Modifying
+	@Transactional
+	@Query("DELETE FROM Chat c WHERE c.chatId = :chatId")
+	public void deleteChat(String chatId);
+
 }
