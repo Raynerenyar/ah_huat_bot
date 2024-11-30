@@ -132,7 +132,6 @@ public class WebscrapperService {
                     cells.get(0).text().replace("Group", "").trim(),
                     cells.get(1).text(),
                     cells.get(2).text()));
-
             sb.append("\n");
         }
         sb.append("```");

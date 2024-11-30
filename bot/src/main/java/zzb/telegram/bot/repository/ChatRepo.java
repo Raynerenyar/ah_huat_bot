@@ -23,6 +23,7 @@ public interface ChatRepo extends JpaRepository<Chat, String> {
 			@Param("nextDrawReceived") boolean nextDrawReceived);
 
 	@Modifying
+	@Transactional
 	@Query("UPDATE Chat c SET c.nextDrawReceived = :nextDrawReceived where c.chatId IN :chatIds")
 	public void updateChatsNextDrawReceived(
 			@Param("nextDrawReceived") boolean nextDrawReceived,
@@ -40,5 +41,4 @@ public interface ChatRepo extends JpaRepository<Chat, String> {
 	@Transactional
 	@Query("DELETE FROM Chat c WHERE c.chatId = :chatId")
 	public void deleteChat(String chatId);
-
 }
